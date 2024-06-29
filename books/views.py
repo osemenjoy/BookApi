@@ -1,23 +1,36 @@
 from .models import Books
 from .serializers import BookSerializers
-from rest_framework import generics, permissions
-from rest_framework import viewsets, pagination
-from rest_framework.filters import SearchFilter
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
+from rest_framework import viewsets, pagination, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from main.permissions import IsAdminOrReadOnly
 
 class BookViewSet(viewsets.ModelViewSet):
     queryset = Books.objects.all()
     serializer_class = BookSerializers
-    filter_backends = [SearchFilter, DjangoFilterBackend]
-    search_fields = ['title', 'author', 'isbn']
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     pagination_class = pagination.PageNumberPagination  
     page_size = 20
+    permission_classes = [IsAdminOrReadOnly]
 
-    def get_permissions(self):
-        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-            return [permissions.IsAdminUser()]
-        return [permissions.IsAuthenticatedOrReadOnly()]
+    @action(detail=True, methods=['get'], url_path='check_availability')
+    def get(self, request, pk=None):
+        try:
+            book = Books.objects.get(pk=pk)
+            available = book.available
+
+            return Response(
+                {
+                    'available': available
+                }, status=status.HTTP_200_OK
+            )
+        except Books.DoesNotExist:
+            return Response(
+                {
+                    'error': 'Book not found'
+                }, status=status.HTTP_404_NOT_FOUND
+            )
+
 
 class BookSearchViewSet(viewsets.ModelViewSet):
     queryset = Books.objects.all()
