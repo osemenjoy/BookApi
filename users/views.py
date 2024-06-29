@@ -10,38 +10,41 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import login, logout 
 from rest_framework.generics import GenericAPIView
 from rest_framework import viewsets
+from django.db import transaction
+
 
 
 class RegisterView(APIView):
     serializer_class = RegistrationSerializer
     permission_classes = [permissions.AllowAny]
     def post(self, request):
-        try:
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            email = serializer.validated_data.get(email)
-            password = serializer.validated_data.get(password)
-            username = serializer.validated_data.get(username)
-            if CustomUser.objects.filter(email=email).exists():
-                raise Exception ("A user with this email address alredy exists")
-            user = CustomUser.objects.create_user(email=email, password=password, username=username)
-            return Response(
+        with transaction.atomic():
+            try:
+                serializer = self.get_serializer(data=request.data)
+                serializer.is_valid(raise_exception=True)
+                email = serializer.validated_data.get(email)
+                password = serializer.validated_data.get(password)
+                username = serializer.validated_data.get(username)
+                if CustomUser.objects.filter(email=email).exists():
+                    raise Exception ("A user with this email address alredy exists")
+                user = CustomUser.objects.create_user(email=email, password=password, username=username)
+                return Response(
+                    {
+                    "message": "User created successfully", 
+                    "status": "Success",
+                    "data": UsersSerializer(user).data,
+                }, status=status.HTTP_201_CREATED)
+                
+            except Exception as e:
+                return Response(
                 {
-                "message": "User created successfully", 
-                "status": "Success",
-                "data": UsersSerializer(user).data,
-            }, status=status.HTTP_201_CREATED)
-            
-        except Exception as e:
-            return Response(
-            {
-                "status": "failed",
-                "message": f"Registration Unuccessful: {e}",
-                "data": [],
+                    "status": "failed",
+                    "message": f"Registration Unuccessful: {e}",
+                    "data": [],
 
-            },
-            status=status.HTTP_400_BAD_REQUEST
-        )
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class LoginView(APIView):
