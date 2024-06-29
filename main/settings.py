@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'books.apps.BooksConfig',
+    'drf_spectacular',
 ]
 REST_FRAMEWORK = {
 
@@ -54,6 +55,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.IsAuthenticated",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema", 
 }
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
@@ -157,3 +159,10 @@ AUTH_USER_MODEL = "users.CustomUser"
 
 CORS_ORIGIN_ALLOW_ALL = True #allow all frontend port
 CORS_ALLOW_CREDENTIALS = True #allows frontend to get cookies
+
+SPECTACULAR_SETTINGS = {
+"TITLE": "BOOK MANAGEMENT API Project",
+"DESCRIPTION": "A Book Management System API",
+"VERSION": "1.0.0",
+# OTHER SETTINGS
+}
