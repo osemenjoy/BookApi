@@ -77,13 +77,13 @@ You can access the Django admin site at http://127.0.0.1:8000/admin/ using the s
 ## API Endpoints
 Here are some of the key API endpoints available in the application:
 
-Add a new book: POST /api/all_books/books/
-Edit a book: PUT /api/all_books/books/{id}/
-Delete a book: DELETE /api/all_books/books/{id}/
-List all books: GET /api/all_books/books/
-Check book availability: GET /api/all_books/books/{id}/check_availability/
-Search books: GET /api/all_books/search_books/?{add query param}
-API documentation: GET /api/schema/redoc/
-Login Endpoint: POST api/login/
-Registration for users: POST api/register/
-refresh token: POST api/token/refresh/
+- Add a new book: POST /api/all_books/books/
+- Edit a book: PUT /api/all_books/books/{id}/
+- Delete a book: DELETE /api/all_books/books/{id}/
+- List all books: GET /api/all_books/books/
+- Check book availability: GET /api/all_books/books/{id}/check_availability/
+- Search books: GET /api/all_books/search_books/?{add query param}
+- API documentation: GET /api/schema/redoc/
+- Login Endpoint: POST api/login/
+- Registration for users: POST api/register/
+- refresh token: POST api/token/refresh/
